@@ -15,8 +15,8 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 all: install
 
 install: go.sum
-		go install -mod=readonly $(BUILD_FLAGS) ./cmd/higand
-		go install -mod=readonly $(BUILD_FLAGS) ./cmd/higancli
+		go install $(BUILD_FLAGS) ./cmd/higand
+		go install $(BUILD_FLAGS) ./cmd/higancli
 
 go.sum: go.mod
 		@echo "--> Ensure dependencies have not been modified"
@@ -24,7 +24,7 @@ go.sum: go.mod
 
 # Uncomment when you have some tests
 # test:
-# 	@go test -mod=readonly $(PACKAGES)
+# 	@go test $(PACKAGES)
 
 # look into .golangci.yml for enabling / disabling linters
 lint:
