@@ -3,7 +3,6 @@ package keeper
 import (
 	"fmt"
 
-	"github.com/tendermint/tendermint/crypto"
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -33,25 +32,52 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
-// Get returns the pubkey from the adddress-pubkey relation
-func (k Keeper) Get(ctx sdk.Context, key string) (/* TODO: Fill out this type */, error) {
+// GetNote get note from store
+func (k Keeper) GetNote(ctx sdk.Context, recorder sdk.AccAddress) (types.Note, error) {
+	records, err := k.GetRecords(ctx, recorder)
+	if err != nil {
+		return types.Note{}, nil
+	}
+
+	return types.Note{
+		Records:  records,
+		Recorder: recorder}, nil
+
+}
+
+// SetNote set note to store
+func (k Keeper) SetNote(ctx sdk.Context, msg types.MsgSetRecord) error {
 	store := ctx.KVStore(k.storeKey)
-	var item /* TODO: Fill out this type */
-	byteKey := []byte(key)
-	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &item)
+	record := types.Record{
+		Name: msg.Name,
+		Born: msg.Born,
+		Died: msg.Died,
+		Memo: msg.Memo,
+	}
+	oldNote, err := k.GetNote(ctx, msg.Recorder)
+	if err != nil {
+		return err
+	}
+	oldRecords := oldNote.GetRecords()
+	note := types.Note{
+		Records:  append(oldRecords, record),
+		Recorder: msg.Recorder,
+	}
+
+	bz := k.cdc.MustMarshalBinaryLengthPrefixed(note)
+	store.Set([]byte(msg.Recorder), bz)
+
+	return nil
+}
+
+// GetRecords get many records recording by recorder
+func (k Keeper) GetRecords(ctx sdk.Context, recorder sdk.AccAddress) ([]types.Record, error) {
+	store := ctx.KVStore(k.storeKey)
+	var records []types.Record
+	byteKey := []byte(recorder)
+	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &records)
 	if err != nil {
 		return nil, err
 	}
-	return item, nil
-}
-
-func (k Keeper) set(ctx sdk.Context, key string, value /* TODO: fill out this type */ ) {
-	store := ctx.KVStore(k.storeKey)
-	bz := k.cdc.MustMarshalBinaryLengthPrefixed(value)
-	store.Set([]byte(key), bz)
-}
-
-func (k Keeper) delete(ctx sdk.Context, key string) {
-	store := ctx.KVStore(k.storeKey)
-	store.Delete([]byte(key))
+	return records, nil
 }

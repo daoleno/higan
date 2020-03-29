@@ -1,14 +1,15 @@
 package cli
 
 import (
-	"fmt"
 	"bufio"
+	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/context"
+	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/auth"
@@ -27,33 +28,50 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 	}
 
 	tombstoneTxCmd.AddCommand(flags.PostCommands(
-		// TODO: Add tx based commands
-		// GetCmd<Action>(cdc)
+		GetCmdSetRecord(cdc),
 	)...)
 
 	return tombstoneTxCmd
 }
 
-// Example:
-//
-// GetCmd<Action> is the CLI command for doing <Action>
-// func GetCmd<Action>(cdc *codec.Codec) *cobra.Command {
-// 	return &cobra.Command{
-// 		Use:   "/* Describe your action cmd */",
-// 		Short: "/* Provide a short description on the cmd */",
-// 		Args:  cobra.ExactArgs(2), // Does your request require arguments
-// 		RunE: func(cmd *cobra.Command, args []string) error {
-// 			cliCtx := context.NewCLIContext().WithCodec(cdc)
-// 			inBuf := bufio.NewReader(cmd.InOrStdin())
-// 			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
+// GetCmdSetRecord is the CLI command for doing SetRecord
+func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:   "record [name] [born] [died] [memo]",
+		Short: `record "Arthur Charles Clarke" 12/16/1917 03/19/2008 "He never grew up, but he never stopped growing." --from cosmos1r5ur9cmqtanc3uuayvurcmnx9uzy9kt24u275c`,
+		Args:  cobra.ExactArgs(4),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+			inBuf := bufio.NewReader(cmd.InOrStdin())
+			txBldr := auth.NewTxBuilderFromCLI(inBuf).WithTxEncoder(utils.GetTxEncoder(cdc))
 
-// 			msg := types.NewMsg<Action>(/* Action params */)
-// 			err = msg.ValidateBasic()
-// 			if err != nil {
-// 				return err
-// 			}
+			name := args[0]
+			born, err := time.Parse(types.LayoutDate, args[1])
+			if err != nil {
+				return err
+			}
+			died, err := time.Parse(types.LayoutDate, args[1])
+			if err != nil {
+				return err
+			}
+			memo := args[3]
+			if len(memo) > types.MemoMaxLength {
+				return fmt.Errorf("Memo should less than 140 charactor")
+			}
+			recorder := cliCtx.GetFromAddress()
 
-// 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
-// 		},
-// 	}
-// }
+			if !cmd.Flags().Changed(flags.FlagFrom) {
+				// TODO: Use Public recorder
+				return fmt.Errorf("Flag '%s' must be provided", flags.FlagFrom)
+			}
+
+			msg := types.NewMsgSetRecord(name, born, died, memo, recorder)
+			err = msg.ValidateBasic()
+			if err != nil {
+				return err
+			}
+
+			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
+		},
+	}
+}

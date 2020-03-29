@@ -4,9 +4,9 @@ VERSION := $(shell echo $(shell git describe --tags) | sed 's/^v//')
 COMMIT := $(shell git log -1 --format='%H')
 
 # TODO: Update the ldflags with the app, client & server names
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=NewApp \
-	-X github.com/cosmos/cosmos-sdk/version.ServerName=asd \
-	-X github.com/cosmos/cosmos-sdk/version.ClientName=ascli \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=HIGAN \
+	-X github.com/cosmos/cosmos-sdk/version.ServerName=higand \
+	-X github.com/cosmos/cosmos-sdk/version.ClientName=higancli \
 	-X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 	-X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) 
 
@@ -25,9 +25,3 @@ go.sum: go.mod
 # Uncomment when you have some tests
 # test:
 # 	@go test $(PACKAGES)
-
-# look into .golangci.yml for enabling / disabling linters
-lint:
-	@echo "--> Running linter"
-	@golangci-lint run
-	@go mod verify

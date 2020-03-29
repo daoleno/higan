@@ -12,8 +12,8 @@ const (
 	RouterKey         = types.RouterKey
 	StoreKey          = types.StoreKey
 	DefaultParamspace = types.DefaultParamspace
-	QueryParams       = types.QueryParams
-	QuerierRoute      = types.QuerierRoute
+	// QueryParams       = types.QueryParams
+	QuerierRoute = types.QuerierRoute
 )
 
 var (
@@ -27,7 +27,7 @@ var (
 	// TODO: Fill out function aliases
 
 	// variable aliases
-	ModuleCdc     = types.ModuleCdc
+	ModuleCdc = types.ModuleCdc
 	// TODO: Fill out variable aliases
 )
 
@@ -35,6 +35,7 @@ type (
 	Keeper       = keeper.Keeper
 	GenesisState = types.GenesisState
 	Params       = types.Params
+	MsgRecord    = types.MsgSetRecord
 
 	// TODO: Fill out module types
 )

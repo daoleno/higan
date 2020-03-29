@@ -1,47 +1,55 @@
 package types
 
 import (
+	"time"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
-// TODO: Describe your actions, these will implment the interface of `sdk.Msg`
-/*
-verify interface at compile time
-var _ sdk.Msg = &Msg<Action>{}
+// verify interface at compile time
+var _ sdk.Msg = &MsgSetRecord{}
 
-Msg<Action> - struct for unjailing jailed validator
-type Msg<Action> struct {
-	ValidatorAddr sdk.ValAddress `json:"address" yaml:"address"` // address of the validator operator
+// MsgSetRecord - struct for people be remembered
+type MsgSetRecord struct {
+	Name string    `json:"name"`
+	Born time.Time `json:"born"`
+	Died time.Time `json:"died"`
+	Memo string    `json:"memo"`
+
+	Recorder sdk.AccAddress `json:"recorder"`
 }
 
-NewMsg<Action> creates a new Msg<Action> instance
-func NewMsg<Action>(validatorAddr sdk.ValAddress) Msg<Action> {
-	return Msg<Action>{
-		ValidatorAddr: validatorAddr,
+// NewMsgSetRecord creates a new MsgSetRecord instance
+func NewMsgSetRecord(name string, born, died time.Time, memo string, recorder sdk.AccAddress) MsgSetRecord {
+	return MsgSetRecord{
+		Name:     name,
+		Born:     born,
+		Died:     died,
+		Memo:     memo,
+		Recorder: recorder,
 	}
 }
 
-const <action>Const = "<action>"
+const RecordConst = "Record"
 
 // nolint
-func (msg Msg<Action>) Route() string { return RouterKey }
-func (msg Msg<Action>) Type() string  { return <action>Const }
-func (msg Msg<Action>) GetSigners() []sdk.AccAddress {
-	return []sdk.AccAddress{sdk.AccAddress(msg.ValidatorAddr)}
+func (msg MsgSetRecord) Route() string { return RouterKey }
+func (msg MsgSetRecord) Type() string  { return RecordConst }
+func (msg MsgSetRecord) GetSigners() []sdk.AccAddress {
+	return []sdk.AccAddress{sdk.AccAddress(msg.Recorder)}
 }
 
-GetSignBytes gets the bytes for the message signer to sign on
-func (msg Msg<Action>) GetSignBytes() []byte {
+// GetSignBytes gets the bytes for the message signer to sign on
+func (msg MsgSetRecord) GetSignBytes() []byte {
 	bz := ModuleCdc.MustMarshalJSON(msg)
 	return sdk.MustSortJSON(bz)
 }
 
-ValidateBasic validity check for the AnteHandler
-func (msg Msg<Action>) ValidateBasic() error {
-	if msg.ValidatorAddr.Empty() {
-		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing validator address"
+// ValidateBasic validity check for the AnteHandler
+func (msg MsgSetRecord) ValidateBasic() error {
+	if msg.Recorder.Empty() {
+		return sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, "missing recorder address")
 	}
 	return nil
 }
-*/
