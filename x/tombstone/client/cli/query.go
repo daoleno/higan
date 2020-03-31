@@ -26,7 +26,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 	tombstoneQueryCmd.AddCommand(
 		flags.GetCommands(
-		// TODO: Add query Cmds
+			getCmdRecord(queryRoute, cdc),
 		)...,
 	)
 
@@ -35,14 +35,15 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 
 func getCmdRecord(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "record [recorder]",
-		Short: "record recorder",
-		Args:  cobra.ExactArgs(1),
+		Use:     "record [recorder]",
+		Short:   "record recorder",
+		Example: "higancli query tombstone record cosmos1lxmp6c3229lqy8xuv6tfzjd8fwd8q8yqp443hh",
+		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			recorder := args[0]
 
-			res, _, err := cliCtx.Query(fmt.Sprintf("custom/%s/%s", queryRoute, recorder))
+			res, _, err := cliCtx.Query(fmt.Sprintf("custom/%s/%s/%s", queryRoute, types.QueryRecord, recorder))
 			if err != nil {
 				fmt.Printf("could not query recorder - %s \n", recorder)
 				fmt.Println(err)

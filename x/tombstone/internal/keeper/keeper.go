@@ -75,7 +75,11 @@ func (k Keeper) GetRecords(ctx sdk.Context, recorder sdk.AccAddress) ([]types.Re
 	store := ctx.KVStore(k.storeKey)
 	var records []types.Record
 	byteKey := []byte(recorder)
-	err := k.cdc.UnmarshalBinaryLengthPrefixed(store.Get(byteKey), &records)
+	byteValue := store.Get(byteKey)
+	if byteValue == nil {
+		return nil, fmt.Errorf("Can not find any records")
+	}
+	err := k.cdc.UnmarshalBinaryLengthPrefixed(byteValue, &records)
 	if err != nil {
 		return nil, err
 	}

@@ -14,7 +14,7 @@ const (
 	QuerierRoute = ModuleName
 
 	// LayoutDate Time format
-	LayoutDate = "02/02/2020"
+	LayoutDate = "01/02/2006"
 
 	// MemoMaxLength max length of memo
 	MemoMaxLength = 140

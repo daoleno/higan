@@ -37,9 +37,9 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 // GetCmdSetRecord is the CLI command for doing SetRecord
 func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
-		Use:   "record [name] [born] [died] [memo]",
-		Short: `record "Arthur Charles Clarke" 12/16/1917 03/19/2008 "He never grew up, but he never stopped growing." --from cosmos1r5ur9cmqtanc3uuayvurcmnx9uzy9kt24u275c`,
-		Args:  cobra.ExactArgs(4),
+		Use:     "record [name] [born] [died] [memo]",
+		Example: `higancli tx tombstone record "Arthur Charles Clarke" 12/16/1917 03/19/2008 "He never grew up, but he never stopped growing." --from cosmos1r5ur9cmqtanc3uuayvurcmnx9uzy9kt24u275c`,
+		Args:    cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
 			inBuf := bufio.NewReader(cmd.InOrStdin())
@@ -50,7 +50,7 @@ func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
 			if err != nil {
 				return err
 			}
-			died, err := time.Parse(types.LayoutDate, args[1])
+			died, err := time.Parse(types.LayoutDate, args[2])
 			if err != nil {
 				return err
 			}
