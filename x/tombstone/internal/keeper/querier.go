@@ -26,12 +26,12 @@ func queryRecord(ctx sdk.Context, k Keeper, recorder string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	records, err := k.GetRecords(ctx, recorderAcc)
+	note, err := k.GetNote(ctx, recorderAcc)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := codec.MarshalJSONIndent(types.ModuleCdc, records)
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, note)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}

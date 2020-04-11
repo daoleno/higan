@@ -6,4 +6,4 @@ const (
 )
 
 // QueryRecordList Queries Result Payload for a query
-type QueryRecordList []Record
+type QueryRecordList Note

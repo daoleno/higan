@@ -34,14 +34,20 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 
 // GetNote get note from store
 func (k Keeper) GetNote(ctx sdk.Context, recorder sdk.AccAddress) (types.Note, error) {
-	records, err := k.GetRecords(ctx, recorder)
+	store := ctx.KVStore(k.storeKey)
+	var note types.Note
+	byteValue := store.Get(recorder)
+	if byteValue == nil {
+		return types.Note{
+			Records:  nil,
+			Recorder: recorder}, nil
+	}
+	err := k.cdc.UnmarshalBinaryLengthPrefixed(byteValue, &note)
 	if err != nil {
-		return types.Note{}, nil
+		return types.Note{}, err
 	}
 
-	return types.Note{
-		Records:  records,
-		Recorder: recorder}, nil
+	return note, nil
 
 }
 
@@ -58,30 +64,14 @@ func (k Keeper) SetNote(ctx sdk.Context, msg types.MsgSetRecord) error {
 	if err != nil {
 		return err
 	}
-	oldRecords := oldNote.GetRecords()
+	oldRecords := oldNote.Records
 	note := types.Note{
 		Records:  append(oldRecords, record),
 		Recorder: msg.Recorder,
 	}
 
 	bz := k.cdc.MustMarshalBinaryLengthPrefixed(note)
-	store.Set([]byte(msg.Recorder), bz)
+	store.Set(msg.Recorder, bz)
 
 	return nil
-}
-
-// GetRecords get many records recording by recorder
-func (k Keeper) GetRecords(ctx sdk.Context, recorder sdk.AccAddress) ([]types.Record, error) {
-	store := ctx.KVStore(k.storeKey)
-	var records []types.Record
-	byteKey := []byte(recorder)
-	byteValue := store.Get(byteKey)
-	if byteValue == nil {
-		return nil, fmt.Errorf("Can not find any records")
-	}
-	err := k.cdc.UnmarshalBinaryLengthPrefixed(byteValue, &records)
-	if err != nil {
-		return nil, err
-	}
-	return records, nil
 }

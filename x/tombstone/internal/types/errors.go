@@ -1,7 +1,9 @@
 package types
 
-// TODO: Fill out some custom errors for the module
-// You can see how they are constructed below:
-// var (
-//	ErrInvalid = sdkerrors.Register(ModuleName, 1, "custom error message")
-// )
+import (
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
+var (
+	ErrNotFound = sdkerrors.Register(ModuleName, 1, "Not Found")
+)

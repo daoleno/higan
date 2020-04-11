@@ -14,11 +14,6 @@ type Note struct {
 	Recorder sdk.AccAddress `json:"recorder"`
 }
 
-// GetRecords get records of note
-func (n Note) GetRecords() []Record {
-	return n.Records
-}
-
 // Record people who will be remembered
 type Record struct {
 	Name string    `json:"name"`
