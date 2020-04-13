@@ -11,26 +11,27 @@ import (
 	"github.com/daoleno/higan/x/tombstone/internal/types"
 )
 
-func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router) {
-	// TODO: Define your GET REST endpoints
-	r.HandleFunc(
-		"/tombstone/parameters",
-		queryParamsHandlerFn(cliCtx),
-	).Methods("GET")
+const (
+	restName = "recorder"
+)
+
+func registerQueryRoutes(cliCtx context.CLIContext, r *mux.Router, storeName string) {
+	r.HandleFunc(fmt.Sprintf("/%s/record/{%s}", storeName, restName), queryRecord(cliCtx, storeName)).Methods("GET")
 }
 
-func queryParamsHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
+func queryRecord(cliCtx context.CLIContext, storeName string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		vars := mux.Vars(r)
+		recorder := vars[restName]
+
 		cliCtx, ok := rest.ParseQueryHeightOrReturnBadRequest(w, cliCtx, r)
 		if !ok {
 			return
 		}
 
-		route := fmt.Sprintf("custom/%s/parameters", types.QuerierRoute)
-
-		res, height, err := cliCtx.QueryWithData(route, nil)
+		res, height, err := cliCtx.Query(fmt.Sprintf("custom/%s/%s/%s", storeName, types.QueryRecord, recorder))
 		if err != nil {
-			rest.WriteErrorResponse(w, http.StatusInternalServerError, err.Error())
+			rest.WriteErrorResponse(w, http.StatusNotFound, err.Error())
 			return
 		}
 
