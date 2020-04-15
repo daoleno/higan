@@ -75,3 +75,38 @@ func (k Keeper) SetNote(ctx sdk.Context, msg types.MsgSetRecord) error {
 
 	return nil
 }
+
+// ListRecoder - Get all recorder
+func (k Keeper) ListRecoder(ctx sdk.Context) ([]sdk.AccAddress, error) {
+	store := ctx.KVStore(k.storeKey)
+	var itr = store.Iterator(nil, nil)
+	defer itr.Close()
+
+	var allRecorder []sdk.AccAddress
+	for ; itr.Valid(); itr.Next() {
+		allRecorder = append(allRecorder, itr.Key())
+	}
+
+	return allRecorder, nil
+}
+
+// ListNote - Get all records
+func (k Keeper) ListNote(ctx sdk.Context) ([]types.Note, error) {
+	store := ctx.KVStore(k.storeKey)
+	var itr = store.Iterator(nil, nil)
+	defer itr.Close()
+
+	var (
+		note  types.Note
+		notes []types.Note
+	)
+	for ; itr.Valid(); itr.Next() {
+		err := k.cdc.UnmarshalBinaryLengthPrefixed(itr.Value(), &note)
+		if err != nil {
+			return nil, err
+		}
+		notes = append(notes, note)
+	}
+
+	return notes, nil
+}

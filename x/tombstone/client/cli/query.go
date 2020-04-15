@@ -27,6 +27,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	tombstoneQueryCmd.AddCommand(
 		flags.GetCommands(
 			getCmdRecord(queryRoute, cdc),
+			getCmdList(queryRoute, cdc),
 		)...,
 	)
 
@@ -36,7 +37,7 @@ func GetQueryCmd(queryRoute string, cdc *codec.Codec) *cobra.Command {
 func getCmdRecord(queryRoute string, cdc *codec.Codec) *cobra.Command {
 	return &cobra.Command{
 		Use:     "record [recorder]",
-		Short:   "record recorder",
+		Short:   "query record through recorder",
 		Example: "higancli query tombstone record cosmos1lxmp6c3229lqy8xuv6tfzjd8fwd8q8yqp443hh",
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -50,7 +51,72 @@ func getCmdRecord(queryRoute string, cdc *codec.Codec) *cobra.Command {
 				return nil
 			}
 
-			var out types.QueryRecordList
+			var out types.QueryRecordRes
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+
+}
+
+func getCmdList(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	listCommand := &cobra.Command{
+		Use:                        "list",
+		Short:                      "list recorder or records",
+		DisableFlagParsing:         true,
+		SuggestionsMinimumDistance: 2,
+		RunE:                       client.ValidateCmd,
+	}
+
+	listCommand.AddCommand(
+		flags.GetCommands(
+			getCmdListRecorder(queryRoute, cdc),
+			getCmdListRecord(queryRoute, cdc),
+		)...,
+	)
+
+	return listCommand
+}
+
+func getCmdListRecorder(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:     "recorder",
+		Short:   "list all recorder",
+		Example: "higancli query tombstone list recorder",
+		Args:    cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			res, _, err := cliCtx.Query(fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryAllRecorder))
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+
+			var out types.QueryRecorderRes
+			cdc.MustUnmarshalJSON(res, &out)
+			return cliCtx.PrintOutput(out)
+		},
+	}
+
+}
+
+func getCmdListRecord(queryRoute string, cdc *codec.Codec) *cobra.Command {
+	return &cobra.Command{
+		Use:     "record",
+		Short:   "list all records",
+		Example: "higancli query tombstone list record",
+		Args:    cobra.ExactArgs(0),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			cliCtx := context.NewCLIContext().WithCodec(cdc)
+
+			res, _, err := cliCtx.Query(fmt.Sprintf("custom/%s/%s", queryRoute, types.QueryAllRecord))
+			if err != nil {
+				fmt.Println(err)
+				return nil
+			}
+
+			var out types.QueryAllNoteRes
 			cdc.MustUnmarshalJSON(res, &out)
 			return cliCtx.PrintOutput(out)
 		},

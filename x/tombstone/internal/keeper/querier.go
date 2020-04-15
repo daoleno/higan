@@ -15,6 +15,10 @@ func NewQuerier(k Keeper) sdk.Querier {
 		switch path[0] {
 		case types.QueryRecord:
 			return queryRecord(ctx, k, path[1])
+		case types.QueryAllRecorder:
+			return listRecorder(ctx, k)
+		case types.QueryAllRecord:
+			return listNote(ctx, k)
 		default:
 			return nil, sdkerrors.Wrap(sdkerrors.ErrUnknownRequest, "unknown tombstone query endpoint")
 		}
@@ -32,6 +36,34 @@ func queryRecord(ctx sdk.Context, k Keeper, recorder string) ([]byte, error) {
 	}
 
 	res, err := codec.MarshalJSONIndent(types.ModuleCdc, note)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return res, nil
+}
+
+func listRecorder(ctx sdk.Context, k Keeper) ([]byte, error) {
+	allRecorder, err := k.ListRecoder(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, allRecorder)
+	if err != nil {
+		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
+	return res, nil
+}
+
+func listNote(ctx sdk.Context, k Keeper) ([]byte, error) {
+	notes, err := k.ListNote(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	res, err := codec.MarshalJSONIndent(types.ModuleCdc, notes)
 	if err != nil {
 		return nil, sdkerrors.Wrap(sdkerrors.ErrJSONMarshal, err.Error())
 	}
