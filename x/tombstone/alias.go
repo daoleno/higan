@@ -6,8 +6,6 @@ import (
 )
 
 const (
-	// TODO: define constants that you would like exposed from the internal package
-
 	ModuleName        = types.ModuleName
 	RouterKey         = types.RouterKey
 	StoreKey          = types.StoreKey
@@ -24,11 +22,9 @@ var (
 	NewGenesisState     = types.NewGenesisState
 	DefaultGenesisState = types.DefaultGenesisState
 	ValidateGenesis     = types.ValidateGenesis
-	// TODO: Fill out function aliases
 
 	// variable aliases
 	ModuleCdc = types.ModuleCdc
-	// TODO: Fill out variable aliases
 )
 
 type (
@@ -36,6 +32,4 @@ type (
 	GenesisState = types.GenesisState
 	Params       = types.Params
 	MsgRecord    = types.MsgSetRecord
-
-	// TODO: Fill out module types
 )

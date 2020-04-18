@@ -59,6 +59,7 @@ func (k Keeper) SetNote(ctx sdk.Context, msg types.MsgSetRecord) error {
 		Born: msg.Born,
 		Died: msg.Died,
 		Memo: msg.Memo,
+		Tag:  msg.Tag,
 	}
 	oldNote, err := k.GetNote(ctx, msg.Recorder)
 	if err != nil {

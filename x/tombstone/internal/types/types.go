@@ -20,11 +20,13 @@ type Record struct {
 	Born time.Time `json:"born"`
 	Died time.Time `json:"died"`
 	Memo string    `json:"memo"`
+	Tag  []string  `json:"tag"`
 }
 
 func (r Record) String() string {
 	return strings.TrimSpace(fmt.Sprintf(`Name: %s
 	Born: %s
 	Died: %s
-	Memo: %s`, r.Name, r.Born, r.Died, r.Memo))
+	Memo: %s
+	Tag: %s`, r.Name, r.Born, r.Died, r.Memo, r.Tag))
 }

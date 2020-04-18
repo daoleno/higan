@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/context"
@@ -36,9 +37,9 @@ func GetTxCmd(cdc *codec.Codec) *cobra.Command {
 
 // GetCmdSetRecord is the CLI command for doing SetRecord
 func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:     "record [name] [born] [died] [memo]",
-		Example: `higancli tx tombstone record "Arthur Charles Clarke" 12/16/1917 03/19/2008 "He never grew up, but he never stopped growing." --from cosmos1r5ur9cmqtanc3uuayvurcmnx9uzy9kt24u275c`,
+		Example: `higancli tx tombstone record "Arthur Charles Clarke" 12/16/1917 03/19/2008 "He never grew up, but he never stopped growing." --tag writer,futurist --from cosmos1r5ur9cmqtanc3uuayvurcmnx9uzy9kt24u275c`,
 		Args:    cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx := context.NewCLIContext().WithCodec(cdc)
@@ -58,6 +59,7 @@ func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
 			if len(memo) > types.MemoMaxLength {
 				return fmt.Errorf("Memo should less than 140 charactor")
 			}
+			tag := viper.GetStringSlice(flagTag)
 			recorder := cliCtx.GetFromAddress()
 
 			if !cmd.Flags().Changed(flags.FlagFrom) {
@@ -65,7 +67,7 @@ func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
 				return fmt.Errorf("Flag '%s' must be provided", flags.FlagFrom)
 			}
 
-			msg := types.NewMsgSetRecord(name, born, died, memo, recorder)
+			msg := types.NewMsgSetRecord(name, born, died, memo, tag, recorder)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err
@@ -74,4 +76,7 @@ func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
 			return utils.GenerateOrBroadcastMsgs(cliCtx, txBldr, []sdk.Msg{msg})
 		},
 	}
+
+	cmd.Flags().StringSlice(flagTag, nil, "take comma-separated tag")
+	return cmd
 }
