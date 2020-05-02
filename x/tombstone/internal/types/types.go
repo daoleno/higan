@@ -20,7 +20,7 @@ type Record struct {
 	Born time.Time `json:"born"`
 	Died time.Time `json:"died"`
 	Memo string    `json:"memo"`
-	Tag  []string  `json:"tag"`
+	Tags []string  `json:"tags"`
 }
 
 func (r Record) String() string {
@@ -28,5 +28,5 @@ func (r Record) String() string {
 	Born: %s
 	Died: %s
 	Memo: %s
-	Tag: %s`, r.Name, r.Born, r.Died, r.Memo, r.Tag))
+	Tags: %s`, r.Name, r.Born, r.Died, r.Memo, r.Tags))
 }

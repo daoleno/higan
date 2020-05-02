@@ -25,7 +25,7 @@ type SetRecordReq struct {
 	Born    time.Time    `json:"born"`
 	Died    time.Time    `json:"died"`
 	Memo    string       `json:"memo"`
-	Tag     []string     `json:"tag"`
+	Tags    []string     `json:"tags"`
 
 	Recorder sdk.AccAddress `json:"recorder"`
 }
@@ -45,7 +45,7 @@ func SetRecordHandlerFn(cliCtx context.CLIContext) http.HandlerFunc {
 			return
 		}
 
-		msg := types.NewMsgSetRecord(req.Name, req.Born, req.Died, req.Memo, req.Tag, req.Recorder)
+		msg := types.NewMsgSetRecord(req.Name, req.Born, req.Died, req.Memo, req.Tags, req.Recorder)
 		err := msg.ValidateBasic()
 		if err != nil {
 			rest.WriteErrorResponse(w, http.StatusBadRequest, err.Error())

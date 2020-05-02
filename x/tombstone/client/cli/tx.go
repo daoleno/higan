@@ -59,7 +59,7 @@ func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
 			if len(memo) > types.MemoMaxLength {
 				return fmt.Errorf("Memo should less than 140 charactor")
 			}
-			tag := viper.GetStringSlice(flagTag)
+			tags := viper.GetStringSlice(flagTag)
 			recorder := cliCtx.GetFromAddress()
 
 			if !cmd.Flags().Changed(flags.FlagFrom) {
@@ -67,7 +67,7 @@ func GetCmdSetRecord(cdc *codec.Codec) *cobra.Command {
 				return fmt.Errorf("Flag '%s' must be provided", flags.FlagFrom)
 			}
 
-			msg := types.NewMsgSetRecord(name, born, died, memo, tag, recorder)
+			msg := types.NewMsgSetRecord(name, born, died, memo, tags, recorder)
 			err = msg.ValidateBasic()
 			if err != nil {
 				return err

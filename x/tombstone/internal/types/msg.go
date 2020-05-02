@@ -16,19 +16,19 @@ type MsgSetRecord struct {
 	Born time.Time `json:"born"`
 	Died time.Time `json:"died"`
 	Memo string    `json:"memo"`
-	Tag  []string  `json:"tag"`
+	Tags []string  `json:"tags"`
 
 	Recorder sdk.AccAddress `json:"recorder"`
 }
 
 // NewMsgSetRecord creates a new MsgSetRecord instance
-func NewMsgSetRecord(name string, born, died time.Time, memo string, tag []string, recorder sdk.AccAddress) MsgSetRecord {
+func NewMsgSetRecord(name string, born, died time.Time, memo string, tags []string, recorder sdk.AccAddress) MsgSetRecord {
 	return MsgSetRecord{
 		Name:     name,
 		Born:     born,
 		Died:     died,
 		Memo:     memo,
-		Tag:      tag,
+		Tags:     tags,
 		Recorder: recorder,
 	}
 }
