@@ -30,6 +30,7 @@ func handleMsgRecord(ctx sdk.Context, k Keeper, msg MsgRecord) (*sdk.Result, err
 		sdk.NewEvent(
 			sdk.EventTypeMessage,
 			sdk.NewAttribute(sdk.AttributeKeyModule, types.AttributeValueCategory),
+			sdk.NewAttribute(sdk.AttributeKeyAction, types.EventTypeSetRecord),
 			sdk.NewAttribute(sdk.AttributeKeySender, msg.Recorder.String()),
 		),
 	)

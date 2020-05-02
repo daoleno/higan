@@ -2,7 +2,7 @@ package types
 
 // tombstone module event types
 const (
-	// EventTypeSetRecord = "action"
+	EventTypeSetRecord = "setRecord"
 
 	// AttributeKeyAddress = "address"
 
