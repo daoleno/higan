@@ -13,6 +13,10 @@ BUILD_FLAGS := -ldflags '$(ldflags)'
 
 all: install
 
+build-linux: go.sum
+	env GOOS=linux GOARCH=amd64 go build $(BUILD_FLAGS) -o build/higand ./cmd/higand
+	env GOOS=linux GOARCH=amd64 go build $(BUILD_FLAGS) -o build/higancli ./cmd/higancli
+
 install: go.sum
 		go install $(BUILD_FLAGS) ./cmd/higand
 		go install $(BUILD_FLAGS) ./cmd/higancli
