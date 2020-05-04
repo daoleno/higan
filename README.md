@@ -2,6 +2,8 @@
 
 Higan is a blockchain project for building online tombstone for the dead.
 
+[Higan-ui](https://github.com/daoleno/higan-ui) - the front end of higan.
+
 ## Why Higan?
 
 People will forget, higan will not.
